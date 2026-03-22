@@ -5,12 +5,14 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
+
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
+// Routers
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
@@ -18,17 +20,11 @@ const userRouter = require("./routes/user.js");
 const MONGO_URL = "mongodb://127.0.0.1:27017/BookMyStay";
 
 // DB Connect
-main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 async function main() {
   await mongoose.connect(MONGO_URL);
+  console.log("connected to DB");
 }
+main().catch((err) => console.log(err));
 
 // View Engine
 app.engine("ejs", ejsMate);
@@ -41,7 +37,7 @@ app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Session Config
+// Session
 const sessionOption = {
   secret: "mysupersecretcode",
   resave: false,
@@ -56,14 +52,14 @@ const sessionOption = {
 app.use(session(sessionOption));
 app.use(flash());
 
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Flash locals middleware
+// Flash + user
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
@@ -71,33 +67,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get("/demouser", async (req, res) => {
-//   let fakeUser = new User({
-//     email: "student@gmail.com",
-//     username: "student",
-//   });
+// ================= ROUTES =================
 
-//   let registereduser = await User.register(fakeUser, "helloankesh");
-//   res.send(registereduser);
-// });
-
-// Routes
+// Root
 app.get("/", (req, res) => {
-  res.send("Hi, I am root");
+  res.redirect("/listings");
 });
 
+// Main Routes
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
-// 404 Handler
+// Static pages
+app.get("/privacy", (req, res) => {
+  res.render("privacy.ejs");
+});
+
+app.get("/terms", (req, res) => {
+  res.render("terms.ejs");
+});
+
+// ================= 404 =================
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page not found"));
 });
 
-// Error Handler
+// ================= ERROR HANDLER =================
 app.use((err, req, res, next) => {
-  let { statusCode = 500, message = "Something went wrong" } = err;
+  let { statusCode = 500 } = err;
   res.status(statusCode).render("listings/error.ejs", { err });
 });
 
