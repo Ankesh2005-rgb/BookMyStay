@@ -20,11 +20,11 @@ router.post(
     let review = new Review(req.body.review);
     review.author = req.user._id;
 
-    await review.save();
     listing.reviews.push(review);
-    await listing.save();
 
-    req.flash("success", "Review added!");
+    await review.save();
+    await listing.save();
+    req.flash("success", "New review created!");
     res.redirect(`/listings/${listing._id}`);
   }),
 );
