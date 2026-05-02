@@ -29,13 +29,13 @@ const listingSchema = new Schema({
   },
   geometry: {
     type: {
-      type: String,
-      enum: ["Point"],
-      default: "Point", // ✅ add this
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ["Point"], // 'location.type' must be 'Point'
+      required: true,
     },
     coordinates: {
       type: [Number],
-      default: [77.209, 28.6139], // ✅ add this
+      required: true,
     },
   },
 });
