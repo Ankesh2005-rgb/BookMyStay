@@ -29,6 +29,7 @@ module.exports.showListing = async (req, res) => {
   res.render("listings/show.ejs", { listing });
 };
 
+// 🔥 FIXED FUNCTION
 module.exports.createListing = async (req, res) => {
   let response = await geocodingClient
     .forwardGeocode({
@@ -37,16 +38,21 @@ module.exports.createListing = async (req, res) => {
     })
     .send();
 
-  let url = req.file.path;
-  let filename = req.file.filename;
+  // ✅ Cloudinary upload (IMPORTANT FIX)
+  let result = await cloudinary.uploader.upload(req.file.path);
+
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
-  newListing.image = { url, filename };
+
+  newListing.image = {
+    url: result.secure_url,
+    filename: result.public_id,
+  };
 
   newListing.geometry = response.body.features[0].geometry;
 
-  let savedListing = await newListing.save();
-  console.log(savedListing);
+  await newListing.save();
+
   req.flash("success", "New listing created!");
   res.redirect("/listings");
 };
