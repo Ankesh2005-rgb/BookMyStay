@@ -90,9 +90,9 @@ app.use((req, res, next) => {
 // ================= ROUTES =================
 
 // Root
-// app.get("/", (req, res) => {
-//   res.redirect("/listings");
-// });
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 // Main Routes
 app.use("/listings", listingRouter);
