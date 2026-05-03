@@ -1,8 +1,13 @@
 mapboxgl.accessToken = mapToken;
 
 const map = new mapboxgl.Map({
-  container: "map", // container ID
-  style: "mapbox://styles/mapbox/streets-v11", // style URL
-  center: [77.209, 28.6139], // starting position [lng, lat]
+  container: "map",
+  style: "mapbox://styles/mapbox/streets-v11",
+  center: coordinates,  // ✅ dynamic
   zoom: 9,
 });
+
+// marker bhi add kar
+new mapboxgl.Marker()
+  .setLngLat(coordinates)
+  .addTo(map);
