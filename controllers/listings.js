@@ -1,21 +1,19 @@
+const cloudinary = require("../cloudConfig");
 const Listing = require("../models/listing");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
-// INDEX
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
   res.render("listings/index.ejs", { allListings });
 };
 
-// NEW FORM
 module.exports.renderNewForm = (req, res) => {
   res.render("listings/new.ejs");
 };
 
-// SHOW
 module.exports.showListing = async (req, res) => {
   const { id } = req.params;
 
@@ -31,7 +29,6 @@ module.exports.showListing = async (req, res) => {
   res.render("listings/show.ejs", { listing });
 };
 
-// CREATE
 module.exports.createListing = async (req, res) => {
   let response = await geocodingClient
     .forwardGeocode({
@@ -40,23 +37,20 @@ module.exports.createListing = async (req, res) => {
     })
     .send();
 
-  // ✅ FIXED PART
-  let url = "uploads/" + req.file.filename;
+  let url = req.file.path;
   let filename = req.file.filename;
-
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
   newListing.image = { url, filename };
 
   newListing.geometry = response.body.features[0].geometry;
 
-  await newListing.save();
-
+  let savedListing = await newListing.save();
+  console.log(savedListing);
   req.flash("success", "New listing created!");
   res.redirect("/listings");
 };
 
-// EDIT FORM
 module.exports.renderEditForm = async (req, res) => {
   const { id } = req.params;
 
@@ -66,23 +60,27 @@ module.exports.renderEditForm = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  let originalImageUrl = "/" + listing.image.url; // safe display
+  let originalImageUrl = listing.image.url;
+  originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_250");
 
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
-// UPDATE
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
 
-  let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing }, { new: true });
+  let listing = await Listing.findByIdAndUpdate(id, {
+    ...req.body.listing,
+  });
 
-  // ✅ FIXED PART
   if (req.file) {
+    let result = await cloudinary.uploader.upload(req.file.path);
+
     listing.image = {
-      url: "uploads/" + req.file.filename,
-      filename: req.file.filename,
+      url: result.secure_url,
+      filename: result.public_id,
     };
+
     await listing.save();
   }
 
@@ -90,7 +88,6 @@ module.exports.updateListing = async (req, res) => {
   res.redirect(`/listings/${id}`);
 };
 
-// DELETE
 module.exports.destoryListing = async (req, res) => {
   const { id } = req.params;
 
