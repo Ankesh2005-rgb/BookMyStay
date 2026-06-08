@@ -1,22 +1,58 @@
 <% layout("/layouts/boilerplate") %>
 
+  <div class="hero-section">
+    <div class="hero-content">
+      <p class="hero-sub">Welcome To BookMyStay</p>
+      <h1>Book Your Stay at <span style="color:#fe424d;">Dream</span> Location</h1>
+      <div class="hero-search-bar">
+        <input type="text" placeholder="Arrival Date" class="hero-input" />
+        <div class="hero-divider"></div>
+        <input type="text" placeholder="Departure Date" class="hero-input" />
+        <div class="hero-divider"></div>
+        <input type="text" placeholder="Number of People" class="hero-input" />
+        <button class="hero-btn">BOOK NOW →</button>
+      </div>
+    </div>
+  </div>
+
+
+
   <style>
     #filters {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       align-items: center;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 0.5rem;
+      margin-bottom: 20px;
+    }
+
+    #filters::-webkit-scrollbar {
+      display: none;
     }
 
     .filter {
+      min-width: 90px;
+      padding: 12px;
       text-align: center;
-      margin-right: 1.5rem;
-      margin-top: 2rem;
-      opacity: 0.7;
+      border-radius: 20px;
+      background: #fff;
+
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.1),
+        0 8px 20px rgba(0, 0, 0, 0.08);
+
+      transition: all 0.3s ease;
+      margin: 9px;
     }
 
     .filter:hover {
-      opacity: 1;
-      cursor: pointer;
+      transform: translateY(-6px);
+      box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.15),
+        0 15px 30px rgba(0, 0, 0, 0.12);
     }
 
     .filter p {
@@ -28,13 +64,25 @@
     }
 
     .tax-toggle {
-      border: 1px solid black;
-      border-radius: 1rem;
-      height: 3.25rem;
-      padding: 1rem;
-      margin-left: 1rem;
       display: flex;
       align-items: center;
+
+      padding: 0.8rem 1.2rem;
+
+      background: white;
+
+      border: 1px solid #ddd;
+      border-radius: 16px;
+
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+      transition: all 0.3s ease;
+    }
+
+    .tax-toggle:hover {
+      transform: translateY(-2px);
+
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
   </style>
   <div id="filters">
@@ -86,7 +134,7 @@
     <div class="tax-toggle">
       <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-        <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
+        <label class="form-check-label" for="switchCheckDefault">After Taxes</label>
       </div>
     </div>
 
@@ -96,7 +144,7 @@
     <% for(let listing of allListings) { %>
       <a href="/listings/<%= listing._id %>" class="listing-link text-decoration-none text-dark">
         <div class="card col listing-card">
-<img src="<%= listing.image.url %>" class="card-img-top" />
+          <img src="<%= listing.image.url %>" class="card-img-top" />
           <div class="card-img-overlay"></div>
           <div class="card-body">
             <p class="card-text">

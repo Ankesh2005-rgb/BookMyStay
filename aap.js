@@ -99,6 +99,14 @@ app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
+app.get("/profile", (req, res) => {
+    if(!req.user){
+        req.flash("error", "Pehle login karo!");
+        return res.redirect("/login");
+    }
+    res.render("users/profile");
+});
+
 // Static pages
 app.get("/privacy", (req, res) => {
   res.render("privacy.ejs");
