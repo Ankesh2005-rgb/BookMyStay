@@ -6,9 +6,29 @@ const mapToken = process.env.MAPBOX_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 // INDEX
+// PURANA
 module.exports.index = async (req, res) => {
   const allListings = await Listing.find({});
   res.render("listings/index.ejs", { allListings });
+};
+
+// NAYA
+module.exports.index = async (req, res) => {
+  const allListings = await Listing.find({}).populate("reviews");
+
+  const listingsWithRating = allListings.map(listing => {
+    let avgRating = 0;
+    let totalReviews = listing.reviews.length;
+
+    if (totalReviews > 0) {
+      let sum = listing.reviews.reduce((acc, r) => acc + r.rating, 0);
+      avgRating = (sum / totalReviews).toFixed(1);
+    }
+
+    return { ...listing.toObject(), avgRating, totalReviews };
+  });
+
+  res.render("listings/index.ejs", { allListings: listingsWithRating });
 };
 
 // NEW FORM
@@ -29,7 +49,15 @@ module.exports.showListing = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  res.render("listings/show.ejs", { listing });
+  // Real avg rating
+  let avgRating = 0;
+  let totalReviews = listing.reviews.length;
+  if (totalReviews > 0) {
+    let sum = listing.reviews.reduce((acc, r) => acc + r.rating, 0);
+    avgRating = (sum / totalReviews).toFixed(1);
+  }
+
+  res.render("listings/show.ejs", { listing, avgRating, totalReviews });
 };
 
 // CREATE

@@ -33,10 +33,30 @@
 
     <%- include('../includes/footer.ejs') %>
 
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+      <!-- Chatbot Button -->
+      <div id="chat-btn" onclick="toggleChat()">
+        <i class="fa-solid fa-comment-dots"></i>
+      </div>
 
+      <!-- Chatbot Window -->
+      <div id="chat-window">
+        <div id="chat-header">
+          <span>🏠 BookMyStay Assistant</span>
+          <i class="fa-solid fa-xmark" onclick="toggleChat()"></i>
+        </div>
+        <div id="chat-messages">
+          <div class="bot-msg">Namaste! 👋 Kaise help kar sakta hun?</div>
+        </div>
+        <div id="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Message likho..."
+            onkeydown="if(event.key==='Enter') sendMessage()" />
+          <button onclick="sendMessage()">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" ...></script>
       <script src="/js/script.js"></script>
 
 </body>

@@ -13,6 +13,10 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const bookingRouter = require("./routes/booking");
 
 // Routers
 const listingRouter = require("./routes/listing.js");
@@ -20,6 +24,8 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
 const dbUrl = process.env.ATLASDB_URL;
+
+
 
 main()
   .then(() => {
@@ -97,6 +103,8 @@ app.get("/", (req, res) => {
 // Main Routes
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
+app.use("/listings/:id/bookings", bookingRouter);  // ← yahan
+app.use("/bookings", bookingRouter);
 app.use("/", userRouter);
 
 app.get("/profile", (req, res) => {
@@ -114,6 +122,36 @@ app.get("/privacy", (req, res) => {
 
 app.get("/terms", (req, res) => {
   res.render("terms.ejs");
+});
+
+app.post("/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash"
+});
+
+    const result = await model.generateContent(`
+      You are BookMyStay Assistant.
+
+      Rules:
+      - Reply in Hinglish.
+      - Help with hotels, stays, travel and bookings.
+      - Be friendly and short.
+
+      User: ${message}
+    `);
+
+    const reply = result.response.text();
+
+    res.json({ reply });
+  } catch (err) {
+    console.log(err);
+    res.json({
+      reply: "Sorry! Chatbot abhi available nahi hai.",
+    });
+  }
 });
 
 // ================= 404 =================

@@ -1,0 +1,58 @@
+<% layout("/layouts/boilerplate") %>
+
+    <div class="container mt-4">
+        <h3>My Bookings</h3>
+        <hr />
+
+        <% if (bookings.length===0) { %>
+            <div class="text-center mt-5">
+                <i class="fa-solid fa-calendar-xmark" style="font-size:3rem; color:#ccc;"></i>
+                <p class="mt-3 text-muted">Koi booking nahi hai abhi.</p>
+                <a href="/listings" class="btn btn-danger mt-2">Listings Explore Karo</a>
+            </div>
+            <% } else { %>
+                <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-3">
+                    <% for (let booking of bookings) { %>
+                        <div class="col">
+                            <div class="card h-100" style="border-radius:12px; overflow:hidden; border:1px solid #eee;">
+                                <img src="<%= booking.listing.image.url %>" style="height:160px; object-fit:cover;" />
+                                <div class="p-3">
+                                    <h6 class="fw-bold">
+                                        <%= booking.listing.title %>
+                                    </h6>
+                                    <p class="text-muted mb-1" style="font-size:13px;">
+                                        <i class="fa-solid fa-location-dot" style="color:#fe424d;"></i>
+                                        <%= booking.listing.location %>
+                                    </p>
+                                    <hr class="my-2" />
+                                    <p class="mb-1" style="font-size:13px;">
+                                        <i class="fa-solid fa-calendar-check" style="color:#fe424d;"></i>
+                                        <b>Check-in:</b>
+                                        <%= booking.checkIn.toDateString() %>
+                                    </p>
+                                    <p class="mb-1" style="font-size:13px;">
+                                        <i class="fa-solid fa-calendar-xmark" style="color:#fe424d;"></i>
+                                        <b>Check-out:</b>
+                                        <%= booking.checkOut.toDateString() %>
+                                    </p>
+                                    <p class="mb-1" style="font-size:13px;">
+                                        <i class="fa-solid fa-moon" style="color:#fe424d;"></i>
+                                        <b>
+                                            <%= booking.totalNights %> nights
+                                        </b>
+                                    </p>
+                                    <hr class="my-2" />
+                                    <p class="mb-1 fw-bold" style="color:#fe424d;">
+                                        ₹<%= booking.totalPrice.toLocaleString("en-IN") %> total
+                                    </p>
+                                    <span class="badge"
+                                        style="background:<%= booking.status === 'confirmed' ? '#d1fae5' : '#fee2e2' %>; color:<%= booking.status === 'confirmed' ? '#065f46' : '#991b1b' %>;">
+                                        <%= booking.status.toUpperCase() %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                </div>
+                <% } %>
+    </div>

@@ -84,6 +84,91 @@
 
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
+
+    .listing-card {
+      position: relative;
+      border: none !important;
+      background: transparent;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Yeh naya add karo */
+    .card-img-wrapper {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .card-img-top {
+      height: 280px;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+      /* gap hatata hai */
+      border-radius: 20px;
+    }
+
+    .wishlist-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .wishlist-btn i {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .wishlist-btn:hover i {
+      color: #fe424d;
+    }
+
+    .listing-rating {
+      position: absolute;
+      bottom: 12px;
+      /* image ke andar bottom pe */
+      left: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      z-index: 10;
+    }
+
+    .card-body {
+      padding: 10px 4px !important;
+    }
+
+    .listing-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .listing-location {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .listing-location i {
+      color: #fe424d;
+      font-size: 12px;
+    }
+
+    .card-price {
+      font-size: 15px;
+      font-weight: 700;
+    }
   </style>
   <div id="filters">
     <div class="filter">
@@ -140,19 +225,41 @@
 
   </div>
 
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3 ">
+  <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 mt-3">
     <% for(let listing of allListings) { %>
       <a href="/listings/<%= listing._id %>" class="listing-link text-decoration-none text-dark">
-        <div class="card col listing-card">
-          <img src="<%= listing.image.url %>" class="card-img-top" />
-          <div class="card-img-overlay"></div>
+        <div class="card listing-card">
+
+          <!-- Image wrapper — yahi fix hai -->
+          <div class="card-img-wrapper">
+            <img src="<%= listing.image.url %>" class="card-img-top" />
+
+            <!-- Heart button — top right -->
+            <button class="wishlist-btn">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+
+            <!-- Rating badge — bottom left, image ke andar -->
+            <div class="listing-rating">
+              <% if(listing.totalReviews> 0) { %>
+                ⭐ <%= listing.avgRating %>
+                  <% } else { %>
+                    New
+                    <% } %>
+            </div>
+          </div>
+
           <div class="card-body">
-            <p class="card-text">
-              <b>
-                <%= listing.title %>
-              </b> <br>
-              &#8377; <%= listing.price %> / night
-                <i class="tax-info"> &nbsp; &nbsp;+18% GST</i>
+            <p class="listing-title mb-1">
+              <%= listing.title %>
+            </p>
+            <p class="listing-location mb-1">
+              <i class="fa-solid fa-location-dot"></i>
+              <%= listing.location.split(",")[0] %>
+            </p>
+            <p class="card-price">
+              ₹<%= listing.price.toLocaleString("en-IN") %>/night
+                <i class="tax-info"> +18% GST</i>
             </p>
           </div>
         </div>
