@@ -8,6 +8,11 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
+  },
+  profileImage: {
+    url: { type: String, default: "" },
+    filename: { type: String, default: "" },
   },
 });
 

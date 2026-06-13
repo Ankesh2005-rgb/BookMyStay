@@ -1,0 +1,144 @@
+<% layout("/layouts/boilerplate") %>
+
+    <div class="container" style="max-width:500px; margin:2rem auto;">
+        <div class="profile-card">
+            <div class="profile-banner"></div>
+            <div class="profile-body">
+
+                <!-- Photo ya initials -->
+                <% if (currUser.profileImage && currUser.profileImage.url) { %>
+                    <img src="<%= currUser.profileImage.url %>" style="width:90px; height:90px; border-radius:50%;
+                 object-fit:cover; border:4px solid white; margin-top:-45px;" />
+                    <% } else { %>
+                        <div class="profile-avatar-large">
+                            <%= currUser.username[0].toUpperCase() %>
+                        </div>
+                        <% } %>
+
+                            <h4 class="mt-3 mb-0">
+                                <%= currUser.username %>
+                            </h4>
+                            <p style="color:#888; font-size:14px; margin-top:4px;">
+                                <%= currUser.email %>
+                            </p>
+                            <hr>
+
+                            <!-- Flash messages -->
+                            <% if (success && success.length> 0) { %>
+                                <div class="alert alert-success">
+                                    <%= success %>
+                                </div>
+                                <% } %>
+                                    <% if (error && error.length> 0) { %>
+                                        <div class="alert alert-danger">
+                                            <%= error %>
+                                        </div>
+                                        <% } %>
+
+                                            <!-- Photo + Name + Email form -->
+                                            <form action="/profile/edit?_method=PUT" method="POST"
+                                                enctype="multipart/form-data">
+
+                                                <!-- Photo Upload — click karo to file chooser khule -->
+                                                <div class="photo-upload-box mb-3"
+                                                    onclick="document.getElementById('photoInput').click()" style="display:flex; align-items:center; gap:12px; padding:12px;
+                 background:#f9f9f9; border:1.5px dashed #ddd; border-radius:10px; cursor:pointer;">
+                                                    <% if (currUser.profileImage && currUser.profileImage.url) { %>
+                                                        <img src="<%= currUser.profileImage.url %>" id="photoPreview"
+                                                            style="width:48px; height:48px; border-radius:50%; object-fit:cover;" />
+                                                        <% } else { %>
+                                                            <div id="photoPreview" style="width:48px; height:48px; border-radius:50%; background:#fe424d;
+                     color:white; display:flex; align-items:center; justify-content:center;
+                     font-size:18px; font-weight:600;">
+                                                                <%= currUser.username[0].toUpperCase() %>
+                                                            </div>
+                                                            <% } %>
+                                                                <div>
+                                                                    <div style="font-size:14px; font-weight:500;">
+                                                                        <%= currUser.username %>
+                                                                    </div>
+                                                                    <div style="font-size:12px; color:#888;">
+                                                                        <i class="fa-solid fa-upload"
+                                                                            style="font-size:11px;"></i> Change photo
+                                                                    </div>
+                                                                </div>
+                                                </div>
+                                                <input type="file" id="photoInput" name="profileImage" accept="image/*"
+                                                    style="display:none;" onchange="previewPhoto(this)" />
+
+                                                <div class="mb-3">
+                                                    <label style="font-size:13px; color:#888;">
+                                                        <i class="fa-solid fa-user" style="font-size:12px;"></i> Full
+                                                        Name
+                                                    </label>
+                                                    <input type="text" name="username" class="form-control mt-1"
+                                                        value="<%= currUser.username %>" required />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label style="font-size:13px; color:#888;">
+                                                        <i class="fa-solid fa-envelope" style="font-size:12px;"></i>
+                                                        Email
+                                                    </label>
+                                                    <input type="email" name="email" class="form-control mt-1"
+                                                        value="<%= currUser.email %>" required />
+                                                </div>
+
+                                                <button class="btn w-100 text-white mb-2" style="background:#fe424d;">
+                                                    Save Changes
+                                                </button>
+                                            </form>
+
+                                            <hr>
+                                            <p style="font-size:13px; font-weight:500; color:#888; margin-bottom:12px;">
+                                                Change Password
+                                            </p>
+
+                                            <form action="/profile/change-password?_method=PUT" method="POST">
+                                                <div class="mb-3">
+                                                    <label style="font-size:13px; color:#888;">Current Password</label>
+                                                    <input type="password" name="currentPassword"
+                                                        class="form-control mt-1" required />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label style="font-size:13px; color:#888;">New Password</label>
+                                                    <input type="password" name="newPassword" class="form-control mt-1"
+                                                        required />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label style="font-size:13px; color:#888;">Confirm New
+                                                        Password</label>
+                                                    <input type="password" name="confirmPassword"
+                                                        class="form-control mt-1" required />
+                                                </div>
+                                                <button class="btn w-100 text-white" style="background:#fe424d;">
+                                                    Update Password
+                                                </button>
+                                            </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo live preview script -->
+    <script>
+        function previewPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('photoPreview');
+                    // Agar img tag hai toh src update karo, warna div ko img se replace karo
+                    if (preview.tagName === 'IMG') {
+                        preview.src = e.target.result;
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.id = 'photoPreview';
+                        img.style = 'width:48px; height:48px; border-radius:50%; object-fit:cover;';
+                        preview.replaceWith(img);
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>

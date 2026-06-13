@@ -285,12 +285,12 @@ footer > div:last-child {
 
 .profile-banner {
   background: #fe424d;
-  height: 75px;
+  height: 90px;        
 }
 
 .profile-body {
   padding: 0 1.5rem 1.5rem;
-  margin-top: -50px;
+  margin-top: 0;      
 }
 
 .profile-avatar-large {
@@ -305,6 +305,7 @@ footer > div:last-child {
   align-items: center;
   font-size: 2rem;
   font-weight: bold;
+  margin-top: -30px;  
 }
 
 .profile-links {
@@ -811,3 +812,52 @@ footer > div:last-child {
   cursor: pointer;
 }
 
+/* ===== SHOW PAGE MOBILE FIX ===== */
+/* ===== SHOW PAGE MOBILE FIX ===== */
+@media (max-width: 768px) {
+
+  .row.mt-3 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .col-12.col-md-8.offset-md-2 {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .listing-hero {
+    height: 220px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+
+  .owner-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .booking-form .col-6 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .btn.btn-outline-dark {
+    width: 100%;
+  }
+
+  .listing-body .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .price-pill {
+    align-self: flex-start;
+  }
+
+  #map {
+    height: 220px;
+  }
+}

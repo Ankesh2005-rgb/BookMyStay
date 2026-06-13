@@ -13,10 +13,9 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const bookingRouter = require("./routes/booking.js");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const bookingRouter = require("./routes/booking");
+
 
 // Routers
 const listingRouter = require("./routes/listing.js");
@@ -124,33 +123,38 @@ app.get("/terms", (req, res) => {
   res.render("terms.ejs");
 });
 
+const Groq = require("groq-sdk");
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
 
-    const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash"
-});
-
-    const result = await model.generateContent(`
-      You are BookMyStay Assistant.
-
-      Rules:
-      - Reply in Hinglish.
-      - Help with hotels, stays, travel and bookings.
-      - Be friendly and short.
-
-      User: ${message}
-    `);
-
-    const reply = result.response.text();
-
-    res.json({ reply });
-  } catch (err) {
-    console.log(err);
-    res.json({
-      reply: "Sorry! Chatbot abhi available nahi hai.",
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "system",
+          content: `You are BookMyStay Assistant — a helpful travel and hotel booking assistant. 
+          Reply in Hinglish (mix of Hindi and English). 
+          Help users with: finding stays, bookings, cancellations, and travel tips.
+          Keep replies short and friendly.`,
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      max_tokens: 300,
     });
+
+    res.json({
+      reply: completion.choices[0].message.content,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.json({ reply: "Assistant abhi available nahi hai, thodi der baad try karo." });
   }
 });
 

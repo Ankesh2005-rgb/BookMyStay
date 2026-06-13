@@ -2,42 +2,46 @@
 
     <div class="container" style="max-width:550px; margin:2rem auto;">
         <div class="profile-card">
-
             <div class="profile-banner"></div>
-
             <div class="profile-body">
-                <div class="profile-avatar-large">
-                    <%= currUser.email.charAt(0).toUpperCase() %>
-                </div>
 
-                <h4 class="mt-3 mb-0">
-                    <%= currUser.username %>
-                </h4>
-                <p style="color:#888; font-size:14px; margin-top:4px;">
-                    <%= currUser.email %>
-                </p>
+                <!-- Photo ya initials -->
+                <% if (currUser.profileImage && currUser.profileImage.url) { %>
+                    <img src="<%= currUser.profileImage.url %>" style="width:90px; height:90px; border-radius:50%;
+                 object-fit:cover; border:4px solid white; margin-top:-45px;" />
+                    <% } else { %>
+                        <div class="profile-avatar-large">
+                            <%= currUser.username[0].toUpperCase() %>
+                        </div>
+                        <% } %>
 
-                <hr>
+                            <h4 class="mt-3 mb-0">
+                                <%= currUser.username %>
+                            </h4>
+                            <p style="color:#888; font-size:14px; margin-top:4px;">
+                                <%= currUser.email %>
+                            </p>
+                            <hr>
 
-                <div class="profile-links">
-                    <a href="/listings" class="profile-link">
-                        <i class="fa-solid fa-building"></i> My Listings
-                    </a>
-                    <a href="/bookings/my-bookings" class="profile-link">
-                        <i class="fa-solid fa-calendar-days"></i> My Bookings
-                    </a>
-                    <a href="#" class="profile-link">
-                        <i class="fa-solid fa-user-pen"></i> Edit Profile
-                    </a>
-                    <a href="/bookings/host-bookings" class="profile-link">
-                        <i class="fa-solid fa-house-chimney-user"></i> My Listing Bookings
-                    </a>
-                    <hr style="margin: 8px 0;">
-                    <a href="/logout" class="profile-link logout-link">
-                        <i class="fa-solid fa-right-from-bracket"></i> Log out
-                    </a>
-                </div>
+                            <div class="profile-links">
+                                <a href="/listings" class="profile-link">
+                                    <i class="fa-solid fa-building"></i> My Listings
+                                </a>
+                                <a href="/bookings/my-bookings" class="profile-link">
+                                    <i class="fa-solid fa-calendar-days"></i> My Bookings
+                                </a>
+                                <a href="/profile/edit" class="profile-link">
+                                    <i class="fa-solid fa-user-pen"></i> Edit Profile
+                                </a>
+                                <a href="/bookings/host-bookings" class="profile-link">
+                                    <i class="fa-solid fa-house-chimney-user"></i> My Listing Bookings
+                                </a>
+                                <hr style="margin: 8px 0;">
+                                <a href="/logout" class="profile-link logout-link">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Log out
+                                </a>
+                            </div>
+
             </div>
-
         </div>
     </div>

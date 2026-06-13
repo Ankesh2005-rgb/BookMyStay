@@ -3,7 +3,7 @@
 
   <div class="row mt-3">
 
-    <div class="col-8 offset-2">
+    <div class="col-12 col-md-8 offset-md-2">
 
       <!-- Hero Image with overlays -->
       <div class="listing-hero position-relative">
@@ -102,7 +102,7 @@
     </div>
 
     <!-- Reviews Section -->
-    <div class="col-8 offset-2 mb-3">
+    <div class="col-12 col-md-8 offset-md-2 mb-3 px-3">
       <hr />
 
       <!-- Rating Summary — real data -->
@@ -127,7 +127,7 @@
                   <%= star %> ★
                 </span>
                 <div style="flex:1; height:5px; background:#eee; border-radius:3px;">
-                  <div style="width:<%= percent %>%; height:100%; background:#fe424d; border-radius:3px;"></div>
+                  <div style="width:<%= percent %>%; height:100%; background:#F59E0B; border-radius:3px;"></div>
                 </div>
                 <span style="font-size:12px; width:20px; color:#888;">
                   <%= count %>
@@ -165,27 +165,34 @@
             <% } %>
 
               <% if(listing.reviews.length> 0) { %>
-                <div class="row">
+                <div class="d-flex flex-column gap-3">
                   <% for (let review of listing.reviews) { %>
-                    <div class="card col-5 ms-3 mb-3">
-                      <div class="card-body">
-                        <h5>
-                          <%= review.author ? review.author.username : "Anonymous" %>
-                        </h5>
-                        <p class="starability-result" data-rating="<%= review.rating %>"></p>
-                        <p>
-                          <%= review.comment %>
-                        </p>
+                    <div style="border:1px solid #eee; border-radius:12px; padding:14px 16px;">
+                      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <div style="width:36px; height:36px; border-radius:50%; background:#fe424d;
+                color:white; display:flex; align-items:center; justify-content:center;
+                font-weight:600; font-size:14px; flex-shrink:0;">
+                          <%= review.author ? review.author.username[0].toUpperCase() : "A" %>
+                        </div>
+                        <div>
+                          <div style="font-weight:500; font-size:14px;">
+                            <%= review.author ? review.author.username : "Anonymous" %>
+                          </div>
+                          <p class="starability-result mb-0" data-rating="<%= review.rating %>"></p>
+                        </div>
                       </div>
+                      <p style="font-size:14px; color:#444; margin:0;">
+                        <%= review.comment %>
+                      </p>
                     </div>
                     <% } %>
                 </div>
                 <% } %>
     </div>
 
+
     <!-- Map Section -->
-    <!-- Map Section -->
-    <div class="col-8 offset-2 mb-3">
+    <div class="col-12 col-md-8 offset-md-2 mb-3 px-3">
       <h3>Where you'll be</h3>
       <div id="map" style="height: 350px; width: 100%; border-radius: 10px;"></div>
     </div>
