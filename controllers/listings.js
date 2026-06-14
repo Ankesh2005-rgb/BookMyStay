@@ -5,30 +5,40 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapToken = process.env.MAPBOX_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
-// INDEX
-// PURANA
+// INDEX — search + category + ratings sab ek saath
 module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({});
-  res.render("listings/index.ejs", { allListings });
-};
+  const { search, category } = req.query;
+  let query = {};
 
-// NAYA
-module.exports.index = async (req, res) => {
-  const allListings = await Listing.find({}).populate("reviews");
+  if (search && search.trim() !== "") {
+    query.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { location: { $regex: search, $options: "i" } },
+      { country: { $regex: search, $options: "i" } },
+    ];
+  }
 
-  const listingsWithRating = allListings.map(listing => {
+  if (category && category.trim() !== "") {
+    query.category = { $regex: category, $options: "i" };
+  }
+
+  const allListings = await Listing.find(query).populate("reviews");
+
+  const listingsWithRating = allListings.map((listing) => {
     let avgRating = 0;
     let totalReviews = listing.reviews.length;
-
     if (totalReviews > 0) {
       let sum = listing.reviews.reduce((acc, r) => acc + r.rating, 0);
       avgRating = (sum / totalReviews).toFixed(1);
     }
-
     return { ...listing.toObject(), avgRating, totalReviews };
   });
 
-  res.render("listings/index.ejs", { allListings: listingsWithRating });
+  res.render("listings/index.ejs", {
+    allListings: listingsWithRating,
+    search: search || "",
+    category: category || "",
+  });
 };
 
 // NEW FORM
@@ -49,7 +59,6 @@ module.exports.showListing = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  // Real avg rating
   let avgRating = 0;
   let totalReviews = listing.reviews.length;
   if (totalReviews > 0) {
@@ -63,13 +72,9 @@ module.exports.showListing = async (req, res) => {
 // CREATE
 module.exports.createListing = async (req, res) => {
   let response = await geocodingClient
-    .forwardGeocode({
-      query: req.body.listing.location,
-      limit: 1,
-    })
+    .forwardGeocode({ query: req.body.listing.location, limit: 1 })
     .send();
 
-  
   let url = req.file.path;
   let filename = req.file.filename;
 
@@ -79,7 +84,6 @@ module.exports.createListing = async (req, res) => {
   newListing.geometry = response.body.features[0].geometry;
 
   await newListing.save();
-
   req.flash("success", "New listing created!");
   res.redirect("/listings");
 };
@@ -87,36 +91,23 @@ module.exports.createListing = async (req, res) => {
 // EDIT FORM
 module.exports.renderEditForm = async (req, res) => {
   const { id } = req.params;
-
   const listing = await Listing.findById(id);
   if (!listing) {
     req.flash("error", "Listing not found!");
     return res.redirect("/listings");
   }
-
-  // ❌ no URL manipulation
   let originalImageUrl = listing.image.url;
-
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
 // UPDATE
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
-
-  let listing = await Listing.findByIdAndUpdate(id, {
-    ...req.body.listing,
-  });
-
+  let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
   if (req.file) {
-    
-    let url = req.file.path;
-    let filename = req.file.filename;
-
-    listing.image = { url, filename };
+    listing.image = { url: req.file.path, filename: req.file.filename };
     await listing.save();
   }
-
   req.flash("success", "Listing updated!");
   res.redirect(`/listings/${id}`);
 };
@@ -124,16 +115,11 @@ module.exports.updateListing = async (req, res) => {
 // DELETE
 module.exports.destoryListing = async (req, res) => {
   const { id } = req.params;
-
   const listing = await Listing.findById(id);
-
-  
   if (listing.image && listing.image.filename) {
     await cloudinary.uploader.destroy(listing.image.filename);
   }
-
   await Listing.findByIdAndDelete(id);
-
   req.flash("success", "Listing deleted!");
   res.redirect("/listings");
 };

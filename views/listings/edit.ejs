@@ -1,63 +1,125 @@
 <% layout("/layouts/boilerplate") %>
 
-  <div class="row mt-3">
-    <div class="col-8 offset-2">
-      <h3>Edit your listing</h3>
+  <div class="row mt-4 mb-5">
+    <div class="col-12 col-md-6 offset-md-3">
 
-      ```
-      <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation"
-        enctype="multipart/form-data">
+      <div
+        style="background:var(--bs-white,#fff); border:1px solid #eee; border-radius:16px; padding:2rem; box-shadow:0 2px 16px rgba(0,0,0,0.07);">
 
-        <div class="mb-3">
-          <label>Title</label>
-          <input name="listing[title]" value="<%= listing.title %>" class="form-control" required />
-          <div class="valid-feedback">Title looks good!</div>
-        </div>
-
-        <div class="mb-3">
-          <label>Description</label>
-          <textarea name="listing[description]" class="form-control" required>
-<%= listing.description %></textarea>
-          <div class="valid-feedback">Write a Description!</div>
-        </div>
-
-        ```
-        <!-- ✅ SAFE IMAGE DISPLAY -->
-        <div class="mb-3">
-          <% if (originalImageUrl) { %>
-            <p>Original listing image:</p>
-            <img src="<%= originalImageUrl %>" style="max-width:200px;" />
-            <% } else { %>
-              <p>No image available</p>
-              <% } %>
-        </div>
-
-        <!-- ✅ FIXED INPUT NAME -->
-        <div class="mb-3">
-          <label>Upload New Image</label>
-          <input name="image" type="file" class="form-control" />
-        </div>
-
-        <div class="row">
-          <div class="mb-3 col-md-4">
-            <label>Price</label>
-            <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" required />
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.5rem;">
+          <div
+            style="width:42px; height:42px; border-radius:50%; background:#fe424d; display:flex; align-items:center; justify-content:center;">
+            <i class="fa-solid fa-pen-to-square" style="color:white; font-size:18px;"></i>
           </div>
-
-          <div class="mb-3 col-md-8">
-            <label>Country</label>
-            <input name="listing[country]" value="<%= listing.country %>" class="form-control" required />
+          <div>
+            <h4 style="margin:0; font-weight:600;">Edit your listing</h4>
+            <p style="margin:0; font-size:13px; color:#888;">Update the details of your property</p>
           </div>
         </div>
 
-        <div class="mb-3">
-          <label>Location</label>
-          <input name="listing[location]" value="<%= listing.location %>" class="form-control" required />
-        </div>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation"
+          enctype="multipart/form-data">
 
-        <button class="btn edit-btn mt-3">Edit</button>
-      </form>
-      ```
+          <div class="mb-3">
+            <label class="form-label fw-semibold" style="font-size:14px;">
+              <i class="fa-solid fa-heading" style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Title
+            </label>
+            <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" required
+              style="border-radius:10px;" />
+            <div class="invalid-feedback">Please enter a title.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" style="font-size:14px;">
+              <i class="fa-solid fa-align-left" style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Description
+            </label>
+            <textarea name="listing[description]" class="form-control" rows="4" required
+              style="border-radius:10px;"><%= listing.description %></textarea>
+            <div class="invalid-feedback">Please write a description.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" style="font-size:14px;">
+              <i class="fa-solid fa-image" style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Current Image
+            </label>
+            <div style="border:1px solid #eee; border-radius:10px; overflow:hidden; max-height:180px;">
+              <% if (originalImageUrl) { %>
+                <img src="<%= originalImageUrl %>" style="width:100%; height:180px; object-fit:cover;" />
+                <% } else { %>
+                  <div
+                    style="height:100px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:13px;">
+                    <i class="fa-solid fa-image me-2"></i> No image uploaded
+                  </div>
+                  <% } %>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" style="font-size:14px;">
+              <i class="fa-solid fa-upload" style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Upload New
+              Image
+              <span style="font-weight:400; color:#888; font-size:12px;">(optional)</span>
+            </label>
+            <input name="image" type="file" class="form-control" accept="image/*" style="border-radius:10px;" />
+            <div class="form-text" style="font-size:12px;">Leave empty to keep existing image</div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-5">
+              <label class="form-label fw-semibold" style="font-size:14px;">
+                <i class="fa-solid fa-indian-rupee-sign"
+                  style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Price / night
+              </label>
+              <div class="input-group">
+                <span class="input-group-text"
+                  style="border-radius:10px 0 0 10px; background:#f9f9f9; border-color:#dee2e6;">₹</span>
+                <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" required
+                  style="border-radius:0 10px 10px 0;" />
+              </div>
+              <div class="invalid-feedback">Enter a valid price.</div>
+            </div>
+
+            <div class="col-7">
+              <label class="form-label fw-semibold" style="font-size:14px;">
+                <i class="fa-solid fa-flag" style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Country
+              </label>
+              <input name="listing[country]" value="<%= listing.country %>" type="text" class="form-control" required
+                style="border-radius:10px;" />
+              <div class="invalid-feedback">Enter country name.</div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold" style="font-size:14px;">
+              <i class="fa-solid fa-location-dot" style="color:#fe424d; font-size:13px; margin-right:6px;"></i>Location
+            </label>
+            <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" required
+              style="border-radius:10px;" />
+            <div class="invalid-feedback">Enter a valid location.</div>
+          </div>
+
+          <button class="btn w-100 text-white fw-semibold"
+            style="background:#fe424d; border-radius:10px; padding:12px; font-size:15px; border:none;">
+            <i class="fa-solid fa-floppy-disk me-2"></i>Save Changes
+          </button>
+
+        </form>
+      </div>
 
     </div>
   </div>
+
+  <script>
+    (() => {
+      const forms = document.querySelectorAll('.needs-validation');
+      forms.forEach(form => {
+        form.addEventListener('submit', e => {
+          if (!form.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        });
+      });
+    })();
+  </script>
